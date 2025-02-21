@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* Aquí pondré las clases de utilidad de tailwindCSS */
+
+@keyframes slideIn {
+  from {
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    scale: 0.8;
+  }
+  to {
+    transform: translate(0%, 0);
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translate(0%, 0);
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    scale: 0.8;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-out {
+  animation: slideOut 0.5s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}

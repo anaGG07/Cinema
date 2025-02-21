@@ -1,0 +1,47 @@
+# Nueva Paleta de Colores VideoClub - Estilo Neón
+
+## Colores Base
+- Morado oscuro (fondo principal): ` #1A0B2E` 
+- Morado profundo (elementos secundarios): ` #2B1B44` 
+- Morado medio (cards): ` #392B5A` 
+
+## Acentos Neón
+- Rosa neón (acento principal): `  #FF2DAF` 
+- Rosa claro (hover estados): `  #FF6AC2` 
+- Rosa suave (textos destacados): `  #FFB4E1` 
+
+## Gradientes
+### Gradiente Principal
+- Desde: ` #1A0B2E`  (morado oscuro)
+- Hasta: ` #392B5A`  (morado medio)
+
+### Gradiente de Acento
+- Desde: ` #FF2DAF`  (rosa neón)
+- Hasta: ` #9B4DFF`  (morado neón)
+
+## Elementos UI
+### Botones
+- Fondo normal: Gradiente ` #FF2DAF → #9B4DFF` 
+- Hover: Aumentar brillo del gradiente
+- Texto: Blanco ` #FFFFFF` 
+
+### Cards
+- Fondo: ` #392B5A`  con opacidad 80%
+- Borde: Gradiente sutil rosa/morado
+- Sombra: Rosa neón con opacidad baja
+
+### Textos
+- Principal: Blanco ` #FFFFFF` 
+- Secundario: Rosa suave ` #FFB4E1` 
+- Terciario: Gris claro ` #B4A9CD` 
+
+### Efectos Especiales
+- Glow rosa: ` box-shadow: 0 0 20px #FF2DAF40` 
+- Glow morado: ` box-shadow: 0 0 20px #9B4DFF40` 
+
+## Uso Recomendado
+- Fondos: Usar el gradiente principal
+- Elementos interactivos: Usar los acentos neón
+- Cards y secciones: Usar morado medio con efecto glassmorphism
+- Destacar: Usar efectos glow para elementos importantes
+- Textos: Mantener alta legibilidad usando los colores definidos
