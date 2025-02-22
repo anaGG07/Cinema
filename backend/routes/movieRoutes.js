@@ -3,9 +3,10 @@ import {
   getPopularMovies,
   searchMovies,
   getMovieDetails,
-  addReview,
-  getMovieReviews,
   getGenres,
+  getMovieReviews,
+  addReview,
+  deleteMovieReview,
 } from "../controllers/movieController.js";
 import authMiddleware from "../middlewares/authMiddleware.js";
 
@@ -21,5 +22,6 @@ router.get("/:movieId/reviews", getMovieReviews);
 // Rutas protegidas 
 router.use(authMiddleware);
 router.post("/:movieId/review", addReview);
+router.delete("/:movieId/review", deleteMovieReview);
 
 export default router;

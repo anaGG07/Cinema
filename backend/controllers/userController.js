@@ -21,13 +21,14 @@ const getUserProfile = async (req, res) => {
 
 // Obtener las reseñas del usuario autenticado
 const getUserReviews = async (req, res) => {
-
   try {
     const user = await User.findById(req.userId);
     const reviewsWithMovies = [];
 
     for (const review of user.reviews) {
-      const movieData = await fetchFromTMDB(`/movie/${review.movieId}`);
+      // Obtener los detalles de la película de TMDB usando el tmdbMovieId
+      const movieData = await fetchFromTMDB(`/movie/${review.tmdbMovieId}`);
+
       reviewsWithMovies.push({
         ...review.toObject(),
         movie: movieData,
@@ -35,9 +36,10 @@ const getUserReviews = async (req, res) => {
     }
 
     res.json(reviewsWithMovies);
-
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener las reseñas del usuario" });
+    res
+      .status(500)
+      .json({ message: "Error al obtener las reseñas del usuario" });
   }
 };
 

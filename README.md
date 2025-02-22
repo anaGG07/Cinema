@@ -101,8 +101,8 @@ La aplicación utiliza **React (Frontend)** y **Node.js con Express (Backend)**,
 
 ### **1️⃣ Clonar el Repositorio**
 ```bash
-git clone https://github.com/anaGG07/videoclub-app.git
-cd videoclub-app
+git clone https://github.com/anaGG07/Cinema.git
+cd cinema
 ```
 
 ### **2️⃣ Configurar Backend**
@@ -112,25 +112,13 @@ cd backend
 npm install
 ```
 
-2. Configurar variables de entorno (.env):
-```bash
-PORT=4000
-MONGODB_URI=mongodb://mongodb:27017/videoclub
-JWT_SECRET=tu_secret_seguro
-TMDB_API_KEY=tu_api_key_themoviedb
-```
-
 ### **3️⃣ Configurar Frontend**
-1. Instalar dependencias:
+Instalar dependencias:
 ```bash
 cd frontend
 npm install
 ```
 
-2. Configurar variables de entorno (.env):
-```bash
-VITE_API_URL=http://localhost:4000/api
-```
 
 ### **Ejecución con Docker**
 ```bash
@@ -150,33 +138,52 @@ npm start
 cd frontend
 npm run dev
 ```
-
 ---
 
-## 🔍 Endpoints Principales de API
+## 🛢️ Acceso a MongoDB desde Docker Desktop
 
-### 🔐 Autenticación
-- `POST /api/auth/register`: Registro de usuario
-- `POST /api/auth/login`: Inicio de sesión
-- `POST /api/auth/logout`: Cierre de sesión
-- `GET /api/auth/google`: Inicio de sesión con Google
-- `GET /api/auth/github`: Inicio de sesión con GitHub
+Acceder al contenedor:
+```bash
+docker exec -it mongodb mongosh
+```
 
-### 🎬 Películas
-- `GET /api/movies/popular`: Películas populares
-- `GET /api/movies/search`: Búsqueda de películas
-- `GET /api/movies/:id`: Detalles de película
+Mediante interfaz:
 
-### ⭐ Favoritos
-- `POST /api/movies/:movieId/favorite`: Añadir a favoritos
-- `DELETE /api/movies/:movieId/favorite`: Eliminar de favoritos
-- `GET /api/movies/user/favorites`: Obtener favoritos del usuario
+![Mediante interfaz](Documentacion\img\image.png)
 
-### 💬 Reseñas
-- `POST /api/movies/:movieId/review`: Añadir reseña
-- `GET /api/movies/:movieId/reviews`: Obtener reseñas de película
+Comandos útiles:
 
----
+
+```bash
+# Mostrar bases de datos
+show dbs
+
+# Usar base de datos
+use cinema_db
+
+# Mostrar colecciones
+show collections
+
+# Ver usuarios registrados
+db.users.find().pretty()
+
+# Ver usuarios que tienen al menos una reseña
+db.users.find({ reviews: { $exists: true, $ne: [] } })
+
+# Ver favoritos de un usuario
+db.users.find({ _id: ObjectId("ID_USUARIO") }, { favoriteMovies: 1 })
+
+# Ver peliculas registradas
+db.movies.find().pretty()
+
+# Ver peliculas que tienen al menos una reseña
+db.movies.find({ reviews: { $exists: true, $ne: [] } })
+
+# Ver todas las reseñas de una pelicula concreta
+db.movies.find({ tmdbId: <id_tmdb> }, { reviews: 1, title: 1 })
+# db.movies.find({ tmdbId: 939243 }, { reviews: 1, title: 1 })
+```
+
 
 ## 🛡 Seguridad y Buenas Prácticas
 

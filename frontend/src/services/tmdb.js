@@ -168,3 +168,28 @@ export const getUserReviews = async () => {
     throw error;
   }
 };
+
+export const deleteMovieReview = async (movieId) => {
+  try {
+    const response = await fetch(API_ROUTES.REVIEWS.DELETE(movieId), {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || `Error ${response.status}: ${response.statusText}`
+      );
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Error al eliminar la reseña:", error);
+    throw error;
+  }
+};

@@ -43,8 +43,12 @@ const userSchema = new mongoose.Schema(
     reviews: [
       {
         movieId: {
-          type: Number,
-          required: true,
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Movie", 
+          required: true, 
+        },
+        movieTitle: {
+          type: String,
         },
         content: {
           type: String,
@@ -59,6 +63,10 @@ const userSchema = new mongoose.Schema(
         createdAt: {
           type: Date,
           default: Date.now,
+        },
+        tmdbMovieId: {
+          type: Number,
+          required: true,
         },
       },
     ],

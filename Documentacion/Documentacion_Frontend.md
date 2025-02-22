@@ -1,7 +1,13 @@
-# 🎬 CineClub - Documentación
+# 🎬 VideoClub - Documentación
+
+
 
 ## 📖 Descripción General
-CineClub es una aplicación web que permite a los usuarios **explorar, buscar y gestionar sus películas favoritas**. Los usuarios pueden **registrarse, iniciar sesión y realizar reseñas sobre las películas**. La aplicación está construida con **React (Frontend)** y se integra con **The Movie Database (TMDB)** para obtener información actualizada sobre películas.
+Aplicación web  que permite a los usuarios explorar, buscar y gestionar películas. Los usuarios pueden registrarse mediante email o Google para acceder a funcionalidades como guardar favoritos y escribir reseñas. 
+
+La aplicación ofrece una interfaz elegante y moderna, con un diseño en tonos oscuros y acentos en morado y rosa. Cuenta con una página principal que muestra películas populares, un sistema de búsqueda avanzado con múltiples filtros, y páginas detalladas para cada película donde se puede ver información completa, trailers y reseñas. 
+
+La aplicación está construida con React, utiliza un backend Node.js que hace peticiones a la API TMDB para la información de películas.
 
 ---
 
@@ -20,7 +26,7 @@ CineClub es una aplicación web que permite a los usuarios **explorar, buscar y 
 - 🔍 **Buscar películas** por nombre o género.
 - ⭐ **Agregar y gestionar favoritos**.
 - 📝 **Escribir y ver reseñas de películas**.
-- 👤 **Registro e inicio de sesión con JWT y OAuth (Google, GitHub)**.
+- 👤 **Registro e inicio de sesión con JWT y OAuth (Google)**.
 - 🏆 **Explorar películas populares y de distintos géneros**.
 - 🖥 **Modo protegido para rutas de usuario autenticado**.
 
@@ -53,41 +59,109 @@ CineClub es una aplicación web que permite a los usuarios **explorar, buscar y 
  
 ```
 
----
+## Puntos destacables de este frontend
 
+### Gestión de estados
 
-## 📌 API Integrada
-El frontend consume la API proporcionada por el backend. Algunos endpoints utilizados incluyen:
-
-### 📍 **Películas**
-#### 🔹 **Obtener películas populares**
-**Endpoint:** `GET /api/movies/popular`
-
-#### 🔹 **Buscar películas**
-**Endpoint:** `GET /api/movies/search?query=nombre`
-
-### 📍 **Favoritos**
-#### 🔹 **Obtener favoritos del usuario**
-**Endpoint:** `GET /api/user/favorites`
-
-#### 🔹 **Agregar a favoritos**
-**Endpoint:** `POST /api/user/favorites/{id}`
-
-#### 🔹 **Eliminar de favoritos**
-**Endpoint:** `DELETE /api/user/favorites/{id}`
-
-### 📍 **Reseñas**
-#### 🔹 **Obtener reseñas de una película**
-**Endpoint:** `GET /api/movies/{id}/reviews`
-
-#### 🔹 **Crear reseña**
-**Endpoint:** `POST /api/movies/{id}/review`
-```json
-{
-  "rating": 5,
-  "content": "Gran película!"
-}
+#### Autenticación local
+```javascript
+// FavoritesContext.jsx - Manejo centralizado de favoritos
+const FavoritesProvider = () => {
+  const [favorites, setFavorites] = useState([]);
+  const handleToggleFavorite = async (movieId) => {
+    try {
+      const response = await fetchFromBackend(API_ROUTES.USER.TOGGLE_FAVORITE(movieId));
+      setFavorites(prev => response.isFavorite 
+        ? [...prev, { id: movieId }] 
+        : prev.filter(fav => fav.id !== movieId));
+    } catch (err) {
+      setError("Error al actualizar favoritos");
+    }
+  };
 ```
+- Manejo de estado global con Context API
+- Sincronización con el backend
+- Manejo de errores y estados de carga
+
+
+
+#### Sistema de Búsqueda Avanzado
+```javascript
+// Search.jsx - Búsqueda con filtros dinámicos
+const performSearch = async (searchQuery, currentFilters) => {
+  const searchOptions = {
+    ...currentFilters,
+    page: 1,
+  };
+  const response = await searchMovies(searchQuery, searchOptions);
+  setMovies(response.results || []);
+};
+```
+- Búsqueda en tiempo real
+- Filtros combinados (género, año, puntuación)
+- Optimización y centralización de llamadas a la API
+
+
+
+#### Custom Hooks Reutilizables
+```javascript
+// useFetch.js - Hook personalizado para peticiones
+export const useFetch = (fetchFunction, dependencies = []) => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
+  useEffect(() => {
+    const abortController = new AbortController();
+    fetchData(abortController.signal);
+    return () => abortController.abort();
+  }, dependencies);
+```
+- Manejo automático de estados de carga
+- Cancelación de peticiones al desmontar
+- Reutilizable en toda la aplicación
+
+
+#### Sistema de Autenticación Completo
+```javascript
+// AuthContext.jsx - Manejo de autenticación
+const handleLogin = async (email, password) => {
+  try {
+    const data = await login(email, password);
+    const userData = await fetchUser();
+    setUser(userData);
+    setIsAuthenticated(true);
+    router.navigate("/");
+  } catch (error) {
+    throw error;
+  }
+};
+```
+- Múltiples métodos de autenticación
+- Persistencia de sesión
+- Manejo de rutas protegidas
+
+
+#### Arquitectura Escalable
+```javascript
+// AuthContext.jsx - Manejo de autenticación
+// apiRoutes.js - Configuración centralizada de rutas
+export const API_ROUTES = {
+  AUTH: {
+    REGISTER: `${BACKEND_API_URL}/auth/register`,
+    LOGIN: `${BACKEND_API_URL}/auth/login`,
+    // ...
+  },
+  USER: {
+    PROFILE: `${BACKEND_API_URL}/users/me`,
+    // ...
+  },
+  // ...
+};
+```
+- Organización modular del código
+- Configuración centralizada
+- Fácil mantenimiento y extensión
+
 
 ---
 

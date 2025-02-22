@@ -13,28 +13,55 @@ const movieSchema = new mongoose.Schema(
     },
     overview: {
       type: String,
-      required: true,
+      required: false,
+      default: "Sin descripción disponible",
     },
     posterPath: {
       type: String,
+      default: "",
     },
-    releaseDate: {
-      type: Date,
+    backdropPath: {
+      type: String,
+      default: "", 
     },
-    popularity: {
-      type: Number,
-    },
-    // Referencia a los comentarios
-    comments: [
+    releaseDate: Date,
+    voteAverage: Number,
+    popularity: Number,
+    genres: [
+      {
+        id: Number,
+        name: String,
+      },
+    ],
+    runtime: Number,
+    videos: [
+      {
+        site: String,
+        key: String,
+        type: String,
+        name: String,
+      },
+    ],
+    reviews: [
       {
         user: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
         },
+        username: {
+          type: String,
+          required: true,
+        },
         content: {
           type: String,
           required: true,
+        },
+        rating: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 5,
         },
         createdAt: {
           type: Date,
@@ -42,10 +69,19 @@ const movieSchema = new mongoose.Schema(
         },
       },
     ],
+    lastUpdated: {
+      type: Date,
+      default: Date.now,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+movieSchema.methods.needsUpdate = function () {
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  return Date.now() - this.lastUpdated > ONE_DAY;
+};
 
 export default mongoose.model("Movie", movieSchema);

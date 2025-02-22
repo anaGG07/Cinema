@@ -32,10 +32,7 @@ export const API_ROUTES = {
   REVIEWS: {
     MOVIE_REVIEWS: (movieId) => `${BACKEND_API_URL}/movies/${movieId}/reviews`,
     CREATE: (movieId) => `${BACKEND_API_URL}/movies/${movieId}/review`,
-    UPDATE: (movieId, reviewId) =>
-      `${BACKEND_API_URL}/movies/${movieId}/reviews/${reviewId}`,
-    DELETE: (movieId, reviewId) =>
-      `${BACKEND_API_URL}/movies/${movieId}/reviews/${reviewId}`,
+    DELETE: (movieId) => `${BACKEND_API_URL}/movies/${movieId}/review`,
   },
 };
 
