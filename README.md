@@ -99,32 +99,19 @@ La aplicación utiliza **React (Frontend)** y **Node.js con Express (Backend)**,
 
 ## 📥 Instalación y Configuración
 
-### **1️⃣ Clonar el Repositorio**
+### **Clonar el Repositorio**
 ```bash
 git clone https://github.com/anaGG07/Cinema.git
 cd cinema
 ```
-
-### **2️⃣ Configurar Backend**
-1. Instalar dependencias:
-```bash
-cd backend
-npm install
-```
-
-### **3️⃣ Configurar Frontend**
-Instalar dependencias:
-```bash
-cd frontend
-npm install
-```
-
 
 ### **Ejecución con Docker**
 ```bash
 # En la raíz del proyecto
 docker-compose up --build
 ```
+
+>[!IMPORTANT]No se requiere ejecutar NPM, ya que Docker está preparado para ejecutar todas las dependencias.
 
 ### **Ejecución sin Docker**
 1. Iniciar Backend:
