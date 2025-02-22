@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: function () {
-        return !this.googleId ;
+        return !this.googleId;
       },
       select: false,
     },
@@ -37,6 +37,7 @@ const userSchema = new mongoose.Schema(
       {
         type: Number,
         ref: "Movie",
+        index: true,
       },
     ],
     reviews: [

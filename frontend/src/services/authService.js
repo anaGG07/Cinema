@@ -1,4 +1,4 @@
-// src/services/authService.js
+
 import { API_ROUTES } from "../config/apiRoutes";
 
 export const fetchFromBackend = async (endpoint, options = {}) => {
@@ -12,7 +12,7 @@ export const fetchFromBackend = async (endpoint, options = {}) => {
       ...options,
     });
 
-    if (response.status === 401 && endpoint === API_ROUTES.AUTH.PROFILE) {
+    if (response.status === 401 && endpoint === API_ROUTES.USER.PROFILE) {
       return null;
     }
 
@@ -23,7 +23,12 @@ export const fetchFromBackend = async (endpoint, options = {}) => {
 
     return await response.json();
   } catch (error) {
-    if (!(error.message === "Usuario no encontrado" && endpoint === API_ROUTES.AUTH.PROFILE)) {
+    
+    if (endpoint.includes('/api/users/me')) {
+      return null;
+    }
+    
+    if (!(error.message === "Usuario no encontrado" && endpoint === API_ROUTES.USER.PROFILE)) {
       console.error(`Error en fetchFromBackend(${endpoint}):`, error);
     }
     throw error;
@@ -47,7 +52,7 @@ export const logout = () =>
 
 export const fetchUser = async () => {
   try {
-    const data = await fetchFromBackend(API_ROUTES.AUTH.PROFILE);
+    const data = await fetchFromBackend(API_ROUTES.USER.PROFILE);
     return data;
   } catch (error) {
     return null;

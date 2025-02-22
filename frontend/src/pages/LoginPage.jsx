@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom"; // useNavigate (hook)
+import { Link, Navigate, useNavigate } from "react-router-dom"; // useNavigate (hook)
 import { useAuth } from "../context/AuthContext";
+import { fetchUser } from "../services/authService";
 import { getPopularMovies, getImageUrl } from "../services/tmdb";
 import { loginWithGoogle } from "../services/authService";
 
@@ -19,6 +20,7 @@ const LoginPage = () => {
 
   useEffect(() => {
     const fetchRandomMovie = async () => {
+
       try {
         const data = await getPopularMovies();
         if (data.results && data.results.length > 0) {
@@ -27,6 +29,7 @@ const LoginPage = () => {
           const backdropPath = getImageUrl(movie.backdrop_path, "original");
           setBackgroundImage(backdropPath);
         }
+
       } catch (error) {
         console.error("Error fetching background image:", error);
       }
@@ -41,16 +44,10 @@ const LoginPage = () => {
     if (oauthToken) {
       const checkOAuth = async () => {
         try {
-          const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/users/me`,
-            {
-              credentials: "include",
-            }
-          );
-
-          if (response.ok) {
-            setRedirectToHome(true);
-          }
+           const userData = await fetchUser();
+           if (userData) {
+             setRedirectToHome(true);
+           }
         } catch (error) {
           console.error("Error checking OAuth auth:", error);
         }
@@ -83,6 +80,7 @@ const LoginPage = () => {
     try {
       await login(formData.email.toLowerCase(), formData.password);
       navigate("/"); 
+
     } catch (err) {
       setError(err.message);
     }

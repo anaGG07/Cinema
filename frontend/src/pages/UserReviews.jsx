@@ -13,7 +13,7 @@ const UserReviews = () => {
     error,
   } = useFetch(
     () =>
-      fetch(API_ROUTES.REVIEWS.USER_REVIEWS, {
+      fetch(API_ROUTES.USER.REVIEWS, {
         credentials: "include",
       }).then((res) => {
         if (!res.ok) throw new Error("Error al cargar las reseñas");

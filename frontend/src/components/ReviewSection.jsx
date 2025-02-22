@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Star, Send, User } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { createMovieReview, getMovieReviews } from "../services/tmdb";
+import Toast from "./Toast";
 
 const ReviewSection = ({ movieId }) => {
   const { isAuthenticated, user } = useAuth();
@@ -10,27 +11,27 @@ const ReviewSection = ({ movieId }) => {
   const [hoveredStar, setHoveredStar] = useState(0);
   const [userReviews, setUserReviews] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [hasUserReview, setHasUserReview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  // Verificar si el usuario ya tiene una reseña
+  const userHasReview = isAuthenticated && user && 
+    userReviews.some(review => review.userId === user._id);
 
   useEffect(() => {
     const fetchReviews = async () => {
       if (!movieId) return;
       
       setLoading(true);
+
       try {
         const reviews = await getMovieReviews(movieId);
-        console.log('Reviews fetched:', reviews); // Debug log
         setUserReviews(reviews);
-        
-        if (isAuthenticated && user?._id) {
-          const existingReview = reviews.find(review => 
-            review.userId === user._id
-          );
-          setHasUserReview(!!existingReview);
-        }
+
       } catch (error) {
         console.error("Error al cargar las reseñas:", error);
+
       } finally {
         setLoading(false);
       }
@@ -44,36 +45,33 @@ const ReviewSection = ({ movieId }) => {
     if (!isAuthenticated || !movieId || rating === 0) return;
 
     setSubmitting(true);
+    
     try {
       const reviewData = {
         content: newReview,
         rating: rating,
         movieId: parseInt(movieId),
-        username: user.username // Añadir el nombre de usuario
+        username: user.username
       };
-
-      console.log('Sending review:', reviewData); // Debug log
 
       const response = await createMovieReview(movieId, reviewData);
-      console.log('Review response:', response); // Debug log
 
-      // Añadir la nueva reseña con todos los datos necesarios
-      const newReviewData = {
+      setUserReviews(prev => [...prev, {
+        ...reviewData,
         _id: response._id,
-        content: newReview,
-        rating: rating,
-        username: user.username,
         userId: user._id,
-        createdAt: new Date().toISOString(),
-        movieId: parseInt(movieId)
-      };
+        createdAt: new Date().toISOString()
+      }]);
       
-      setUserReviews(prev => [...prev, newReviewData]);
-      setHasUserReview(true);
       setNewReview("");
       setRating(0);
+      setToastMessage("Reseña publicada con éxito");
+      setShowToast(true);
+
     } catch (error) {
-      console.error("Error al enviar la reseña:", error);
+      setToastMessage(error.message);
+      setShowToast(true);
+
     } finally {
       setSubmitting(false);
     }
@@ -97,59 +95,68 @@ const ReviewSection = ({ movieId }) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-semibold text-white">Reseñas</h2>
+      <h2 className="text-2xl font-bold text-white mb-4">Reseñas</h2>
 
-      {/* Formulario de reseña */}
-      {isAuthenticated && !hasUserReview && (
-        <form onSubmit={handleSubmitReview} className="space-y-4">
-          <div className="flex items-center space-x-2">
-            {Array.from({ length: 5 }).map((_, star) => (
-              <button
-                key={`rating-star-${star + 1}`}
-                type="button"
-                onClick={() => setRating(star + 1)}
-                onMouseEnter={() => setHoveredStar(star + 1)}
-                onMouseLeave={() => setHoveredStar(0)}
-                className="focus:outline-none"
-              >
-                <Star
-                  className={`w-6 h-6 ${
-                    star + 1 <= (hoveredStar || rating)
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-gray-400"
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
+      {isAuthenticated ? (
+        !userHasReview ? (
+          <form onSubmit={handleSubmitReview} className="space-y-4">
+            <div className="flex items-center space-x-2">
+              {Array.from({ length: 5 }).map((_, star) => (
+                <button
+                  key={`rating-star-${star + 1}`}
+                  type="button"
+                  onClick={() => setRating(star + 1)}
+                  onMouseEnter={() => setHoveredStar(star + 1)}
+                  onMouseLeave={() => setHoveredStar(0)}
+                  className="focus:outline-none"
+                >
+                  <Star
+                    className={`w-6 h-6 ${
+                      star + 1 <= (hoveredStar || rating)
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "text-gray-400"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
 
-          <textarea
-            value={newReview}
-            onChange={(e) => setNewReview(e.target.value)}
-            placeholder="Escribe tu reseña..."
-            className="w-full p-3 bg-[#1A0B2E] border border-[#FF2DAF20] rounded-lg 
-                     text-white placeholder-gray-400 focus:border-[#FF2DAF] 
-                     focus:ring-1 focus:ring-[#FF2DAF] transition-all duration-300"
-            rows="4"
-            required
-          />
+            <textarea
+              value={newReview}
+              onChange={(e) => setNewReview(e.target.value)}
+              placeholder="Escribe tu reseña..."
+              className="w-full p-3 bg-[#1A0B2E] border border-[#FF2DAF20] rounded-lg 
+                       text-white placeholder-gray-400 focus:border-[#FF2DAF] 
+                       focus:ring-1 focus:ring-[#FF2DAF] transition-all duration-300"
+              rows="4"
+              required
+            />
 
-          <button
-            type="submit"
-            disabled={submitting || !rating}
-            className={`flex items-center justify-center gap-2 px-4 py-2 
-                     bg-gradient-to-r from-[#FF2DAF] to-[#9B4DFF] 
-                     rounded-lg text-white font-medium
-                     ${
-                       submitting || !rating
-                         ? "opacity-50 cursor-not-allowed"
-                         : "hover:from-[#FF2DAF] hover:to-[#FF2DAF]"
-                     }`}
-          >
-            <Send className="w-4 h-4" />
-            {submitting ? "Enviando..." : "Enviar reseña"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={submitting || !rating}
+              className={`flex items-center justify-center gap-2 px-4 py-2 
+                       bg-gradient-to-r from-[#FF2DAF] to-[#9B4DFF] 
+                       rounded-lg text-white font-medium
+                       ${
+                         submitting || !rating
+                           ? "opacity-50 cursor-not-allowed"
+                           : "hover:from-[#FF2DAF] hover:to-[#FF2DAF]"
+                       }`}
+            >
+              <Send className="w-4 h-4" />
+              {submitting ? "Enviando..." : "Enviar reseña"}
+            </button>
+          </form>
+        ) : (
+          <p className="text-[#FF2DAF] text-sm">
+            Ya has publicado una reseña para esta película
+          </p>
+        )
+      ) : (
+        <p className="text-gray-400 text-sm">
+          Inicia sesión para dejar una reseña
+        </p>
       )}
 
       {/* Lista de reseñas */}
@@ -196,6 +203,14 @@ const ReviewSection = ({ movieId }) => {
           </p>
         )}
       </div>
+
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          type="success"
+          onClose={() => setShowToast(false)}
+        />
+      )}
     </div>
   );
 };

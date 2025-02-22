@@ -8,12 +8,17 @@ import {
   getGenres,
 } from "../services/tmdb";
 import { API_ROUTES } from "../config/apiRoutes";
-import { useAuth } from "../context/AuthContext"; // Importamos autenticación
-import { useFavorites } from "../hooks/useFavorites"; // Importamos favoritos
+import { useAuth } from "../context/AuthContext"; 
+import { useFavorites } from "../context/FavoritesContext";
 
 const Home = () => {
-  const { isAuthenticated } = useAuth(); // Verificamos autenticación
-  const { favorites, toggleFavorite } = useFavorites(); // Obtenemos favoritos solo si está autenticado
+  const { isAuthenticated } = useAuth(); 
+  const {
+    favorites,
+    toggleFavorite,
+    error: favoritesError,
+    loading: favoritesLoading,
+  } = useFavorites();
   const [page, setPage] = useState(1);
   const [backgroundImage, setBackgroundImage] = useState("");
   const [selectedMovie, setSelectedMovie] = useState(null);
@@ -40,9 +45,11 @@ const Home = () => {
   // Cargar géneros al montar el componente
   useEffect(() => {
     const loadGenres = async () => {
+      
       try {
         const response = await getGenres();
         setGenres(response.genres);
+
       } catch (error) {
         console.error("Error al cargar géneros:", error);
       }
@@ -185,6 +192,7 @@ const Home = () => {
               showFavoriteButton={isAuthenticated}
               isFavorite={isFavorite}
               toggleFavorite={toggleFavorite}
+              isLoading={favoritesLoading}
             />
             {/* Paginación */}
             <div className="flex justify-center mt-12 space-x-4">

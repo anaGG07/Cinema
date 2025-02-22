@@ -42,13 +42,6 @@ const movieSchema = new mongoose.Schema(
         },
       },
     ],
-    // Campo para almacenar los usuarios que han marcado la película como favorita
-    favoritedBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
   },
   {
     timestamps: true,

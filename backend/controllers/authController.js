@@ -76,8 +76,10 @@ const register = async (req, res) => {
       email: email.toLowerCase(), 
       password 
     });
+
     await user.save();
     res.status(201).json({ message: "Usuario registrado exitosamente" });
+
   } catch (error) {
     console.error("Error al registrar usuario:", error);
     res.status(500).json({ message: "Error al registrar el usuario" });
@@ -92,16 +94,11 @@ const logout = (req, res) => {
 
 // Actualizar también las rutas de OAuth
 export const handleOAuthCallback = (req, res) => {
+  
   const token = jwt.sign({ userId: req.user._id }, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 
-  // res.cookie("token", "", { ...cookieConfig, maxAge: 0 });
-  // res.redirect(
-  //   `${
-  //     process.env.FRONTEND_URL || "http://localhost:5173"
-  //   }/login?token=${token}`
-  // );
   res.cookie("token", token, cookieConfig);
   res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
 

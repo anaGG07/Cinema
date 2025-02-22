@@ -3,8 +3,6 @@ import {
   getPopularMovies,
   searchMovies,
   getMovieDetails,
-  toggleFavorite,
-  getFavorites,
   addReview,
   getMovieReviews,
   getGenres,
@@ -22,8 +20,6 @@ router.get("/:movieId/reviews", getMovieReviews);
 
 // Rutas protegidas 
 router.use(authMiddleware);
-router.get("/user/favorites", getFavorites);
-router.post("/:movieId/favorite", toggleFavorite); 
 router.post("/:movieId/review", addReview);
 
 export default router;

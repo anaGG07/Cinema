@@ -13,24 +13,40 @@ export const IMAGE_SIZES = {
 
 // Función para obtener la URL de una imagen
 export const getImageUrl = (path, size = IMAGE_SIZES.POSTER) => {
-  return path ? `${IMAGE_BASE_URL}/${size}${path}` : "/placeholder-movie.jpg";
+  return API_ROUTES.MOVIES.IMAGE(path, size);
 };
 
 // Función de solicitud genérica a la API de TMDB
-const fetchFromAPI = async (endpoint, options = {}, language = "es-ES") => {
+const fetchFromAPI = async (endpoint, options = {}, customConfig = {}) => {
   try {
-    const url = `${API_BASE_URL}${endpoint}?api_key=${API_TOKEN}&language=${language}&${new URLSearchParams(
-      options
-    )}`;
-    const response = await fetch(url);
+    const baseConfig = {
+      api_key: API_TOKEN,
+      language: customConfig.language || "es-ES",
+    };
 
-    if (!response.ok)
+    // Si hay un método POST, no incluir los parámetros en la URL
+    const url = customConfig.method === 'POST' 
+      ? `${API_BASE_URL}${endpoint}`
+      : `${API_BASE_URL}${endpoint}?${new URLSearchParams({
+          ...baseConfig,
+          ...options
+        })}`;
+
+    const response = await fetch(url, {
+      method: customConfig.method || 'GET',
+      headers: customConfig.headers || {},
+      body: customConfig.body,
+      credentials: customConfig.credentials || 'same-origin'
+    });
+
+    if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
 
     return await response.json();
   } catch (error) {
     console.error(`Error en fetchFromAPI(${endpoint}):`, error);
-    return { results: [] };
+    throw error;
   }
 };
 
@@ -53,7 +69,6 @@ export const searchMovies = (query, options = {}) => {
   // Si hay un término de búsqueda, usar la ruta de búsqueda, si no, usar "discover"
   const endpoint = query?.trim() ? API_ROUTES.MOVIES.SEARCH : "/discover/movie";
 
-  // Agregar parámetros condicionalmente
   if (query?.trim()) params.query = query.trim();
   if (options.year) params.primary_release_year = options.year;
   if (options.genre) params.with_genres = options.genre;
@@ -74,7 +89,7 @@ export const getMovieVideos = async (id) => {
 };
 
 // Obtener lista de géneros
-export const getGenres = () => fetchFromAPI("/genre/movie/list");
+export const getGenres = () => fetchFromAPI(API_ROUTES.MOVIES.GENRES);
 
 // Obtener películas por género
 export const getMoviesByGenre = (genreId, page = 1) => {
@@ -87,27 +102,47 @@ export const getMoviesByGenre = (genreId, page = 1) => {
 
 // Crear una reseña de película
 export const createMovieReview = async (movieId, reviewData) => {
-  return fetchFromAPI(API_ROUTES.REVIEWS.CREATE(movieId), reviewData, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    credentials: "include",
-    body: JSON.stringify(reviewData),
-  });
+  try {
+    const response = await fetch(API_ROUTES.REVIEWS.CREATE(movieId), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(reviewData)
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || `Error ${response.status}: ${response.statusText}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error al crear la reseña:', error);
+    throw error;
+  }
 };
 
 // Obtener reseñas de una película
 export const getMovieReviews = async (movieId) => {
-  return fetchFromAPI(
-    API_ROUTES.REVIEWS.MOVIE_REVIEWS(movieId),
-    {},
-    {
-      credentials: "include",
+  try {
+    const response = await fetch(API_ROUTES.REVIEWS.MOVIE_REVIEWS(movieId), {
+      method: 'GET',
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        'Content-Type': 'application/json'
       },
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
-  );
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error al obtener las reseñas:', error);
+    throw error;
+  }
 };

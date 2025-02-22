@@ -18,14 +18,17 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
+
       try {
         const userData = await fetchUser();
         if (userData) {
           setUser(userData);
           setIsAuthenticated(true);
         }
+
       } catch (error) {
         console.error("Error checking auth:", error);
+
       } finally {
         setLoading(false);
       }
@@ -35,21 +38,28 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const handleLogin = async (email, password) => {
+
     try {
       const data = await login(email, password);
+
       const userData = await fetchUser();
       setUser(userData);
+
       setIsAuthenticated(true);
       router.navigate("/");
+
     } catch (error) {
       throw error;
     }
   };
 
   const handleLogout = async () => {
+
     try {
       await logout();
+
     } finally {
+
       setUser(null);
       setIsAuthenticated(false);
       router.navigate("/");
@@ -57,19 +67,23 @@ export const AuthProvider = ({ children }) => {
   };
 
   const handleRegister = async (username, email, password) => {
+
     try {
       await register(username, email, password);
       router.navigate("/login");
+
     } catch (error) {
-      throw error;
+      throw new Error("Error registrando usuario");
     }
   };
 
   const handleAuthError = (error, defaultMessage) => {
     if (error.response?.status === 409) {
       return "El usuario ya existe";
+
     } else if (error.response?.status === 401) {
       return "Credenciales inválidas";
+      
     } else {
       return defaultMessage || "Ocurrió un error durante la autenticación";
     }

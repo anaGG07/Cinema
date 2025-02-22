@@ -1,11 +1,14 @@
+import { AuthProvider } from "./context/AuthContext";
+import { FavoritesProvider } from "./context/FavoritesContext";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./router";
-import { AuthProvider } from "./context/AuthContext";
 
 const App = () => {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
+      <FavoritesProvider>
+        <RouterProvider router={router} />
+      </FavoritesProvider>
     </AuthProvider>
   );
 };

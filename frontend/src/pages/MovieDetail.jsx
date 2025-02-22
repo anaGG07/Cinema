@@ -4,7 +4,7 @@ import { useFetch } from "../hooks/useFetch";
 import { getMovieDetails, getMovieVideos } from "../services/tmdb";
 import { getYouTubeTrailerUrl } from "../config/apiRoutes";
 import ReviewSection from "../components/ReviewSection";
-import { useFavorites } from "../hooks/useFavorites";
+import { useFavorites } from "../context/FavoritesContext";
 import LoadingSpinner from "../components/LoadingSpinner";
 import MovieImage from "../components/MovieImage";
 import { Heart, Star, Play, X } from "lucide-react";
@@ -17,7 +17,6 @@ const MovieDetail = () => {
   const [showTrailer, setShowTrailer] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
   const { toggleFavorite, isFavorite } = useFavorites();
-  const [isFavoriteLocal, setIsFavoriteLocal] = useState(false);
 
   const {
     data: movie,
@@ -25,19 +24,14 @@ const MovieDetail = () => {
     error,
   } = useFetch(() => getMovieDetails(Number(id)), [id]);
 
-  // Efecto para verificar si la película está en favoritos
-  useEffect(() => {
-    if (movie) {
-      setIsFavoriteLocal(isFavorite(movie.id));
-    }
-  }, [movie, isFavorite]);
-
   // Efecto para cargar el trailer
   useEffect(() => {
     const fetchTrailer = async () => {
       setTrailerLoading(true);
       try {
+  
         const response = await getMovieVideos(id);
+  
         if (response.results && response.results.length > 0) {
           const trailerVideo = response.results.find(
             (video) =>
@@ -45,6 +39,7 @@ const MovieDetail = () => {
               video.site === "YouTube" &&
               !video.name.toLowerCase().includes("anuncio")
           );
+  
           setTrailer(trailerVideo || response.results[0] || null);
         }
       } catch (error) {
@@ -145,20 +140,17 @@ const MovieDetail = () => {
                 )}
 
                 <button
-                  onClick={() => {
-                    toggleFavorite(movie.id);
-                    setIsFavoriteLocal(!isFavoriteLocal);
-                  }}
+                  onClick={() => toggleFavorite(movie.id)}
                   className={`flex items-center gap-3 px-8 py-4 rounded-full 
                     border-2 font-semibold text-lg transition-all duration-300
                     ${
-                      isFavoriteLocal
+                      isFavorite(movie.id)
                         ? "border-[#FF2DAF] text-[#FF2DAF] bg-[#FF2DAF20]"
                         : "border-[#B4A9CD] text-[#B4A9CD] hover:border-[#FF2DAF] hover:text-[#FF2DAF]"
                     }`}
                 >
-                  <Heart className={`w-6 h-6 ${isFavoriteLocal ? "fill-[#FF2DAF]" : ""}`} />
-                  {isFavoriteLocal ? "En Favoritos" : "Añadir a Favoritos"}
+                  <Heart className={`w-6 h-6 ${isFavorite(movie.id) ? "fill-[#FF2DAF]" : ""}`} />
+                  {isFavorite(movie.id) ? "En Favoritos" : "Añadir a Favoritos"}
                 </button>
               </div>
 

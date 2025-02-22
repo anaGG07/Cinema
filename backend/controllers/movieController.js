@@ -1,10 +1,9 @@
-import Movie from "../models/Movie.js";
 import User from "../models/User.js";
 
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = process.env.TMDB_BASE_URL;
 
-// Exportar `fetchFromTMDB` para que `userController.js` pueda importarlo
+
 export const fetchFromTMDB = async (endpoint, params = {}) => {
   try {
     const queryParams = new URLSearchParams({
@@ -85,47 +84,6 @@ export const getGenres = async (req, res) => {
   res.json(genres);
 };
 
-// Gestión de favoritos (añadir o eliminar)
-export const toggleFavorite = async (req, res) => {
-  const { movieId } = req.params;
-  const user = await User.findById(req.userId);
-
-  if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-
-  const isFavorite = user.favoriteMovies.includes(Number(movieId));
-
-  if (isFavorite) {
-    user.favoriteMovies = user.favoriteMovies.filter(
-      (id) => id !== Number(movieId)
-    );
-  } else {
-    user.favoriteMovies.push(Number(movieId));
-  }
-
-  await user.save();
-
-  res.json({
-    message: isFavorite
-      ? "Película eliminada de favoritos"
-      : "Película añadida a favoritos",
-    isFavorite: !isFavorite,
-  });
-};
-
-// Obtener favoritos del usuario
-export const getFavorites = async (req, res) => {
-  const user = await User.findById(req.userId);
-  if (!user) return res.status(404).json({ message: "Usuario no encontrado" });
-
-  const favorites = await Promise.all(
-    user.favoriteMovies.map(async (movieId) => {
-      return await fetchFromTMDB(`/movie/${movieId}`);
-    })
-  );
-
-  const validFavorites = favorites.filter((movie) => movie !== null);
-  res.json(validFavorites);
-};
 
 // Añadir una reseña a una película
 export const addReview = async (req, res) => {

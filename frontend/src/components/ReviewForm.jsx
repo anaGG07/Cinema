@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { API_ROUTES } from "../config/apiRoutes";
 import SmallSpinner from "./SmallSpinner";
+import { createMovieReview } from "../tmdb";
 
 const ReviewForm = ({ movieId, onReviewSubmitted }) => {
   const [review, setReview] = useState({ content: "", rating: 5 });
@@ -9,22 +10,16 @@ const ReviewForm = ({ movieId, onReviewSubmitted }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+
     try {
-      const response = await fetch(API_ROUTES.REVIEWS.CREATE(movieId), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(review),
-      });
 
-      if (!response.ok) throw new Error("Error al enviar la reseña");
-
+      await createMovieReview(movieId, review);
       onReviewSubmitted?.();
       setReview({ content: "", rating: 5 });
+
     } catch (error) {
       console.error("Error:", error);
+      
     } finally {
       setSubmitting(false);
     }
