@@ -28,6 +28,7 @@ const MovieDetail = () => {
   useEffect(() => {
     const fetchTrailer = async () => {
       setTrailerLoading(true);
+
       try {
   
         const response = await getMovieVideos(id);
@@ -42,8 +43,10 @@ const MovieDetail = () => {
   
           setTrailer(trailerVideo || response.results[0] || null);
         }
+
       } catch (error) {
         console.error("Error fetching trailer:", error);
+        
       } finally {
         setTrailerLoading(false);
       }

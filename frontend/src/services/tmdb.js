@@ -146,3 +146,25 @@ export const getMovieReviews = async (movieId) => {
     throw error;
   }
 };
+
+// Obtener reseñas del usuario
+export const getUserReviews = async () => {
+  try {
+    const response = await fetch(API_ROUTES.USER.REVIEWS, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error al obtener las reseñas del usuario:', error);
+    throw error;
+  }
+};

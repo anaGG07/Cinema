@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { searchMovies, getGenres } from "../services/tmdb";
-import MovieCard from "../components/MovieCard";
 import { Search, Sliders, X } from "lucide-react";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { Link } from "react-router-dom";
-import { API_ROUTES } from "../config/apiRoutes";
-import { getImageUrl } from "../services/tmdb";
 import { Film } from "lucide-react";
 import MovieImage from '../components/MovieImage';
 
@@ -27,9 +24,11 @@ const SearchPage = () => {
 
   useEffect(() => {
     const loadGenres = async () => {
+
       try {
         const response = await getGenres();
         setGenres(response.genres || []);
+
       } catch (error) {
         console.error("Error loading genres:", error);
       }
@@ -42,16 +41,20 @@ const SearchPage = () => {
     setError(null);
 
     try {
+
       const searchOptions = {
         ...currentFilters,
         page: 1,
       };
+
       const response = await searchMovies(searchQuery, searchOptions);
       setMovies(response.results || []);
       setResults(response.results || []);
       setHasSearched(true);
+
     } catch (err) {
       setError(err.message);
+
     } finally {
       setLoading(false);
     }
@@ -60,9 +63,11 @@ const SearchPage = () => {
   const handleSearchInput = (e) => {
     const value = e.target.value;
     setQuery(value);
+
     const timeoutId = setTimeout(() => {
       performSearch(value, filters);
     }, 500);
+
     return () => clearTimeout(timeoutId);
   };
 
@@ -83,18 +88,16 @@ const SearchPage = () => {
     >
       {/* Elementos decorativos de fondo */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Punto de luz grande superior derecha */}
+
         <div className="absolute -top-20 right-20 w-96 h-96 bg-[#9B4DFF] rounded-full opacity-20 blur-[100px]"></div>
 
-        {/* Punto de luz mediano superior izquierda */}
         <div className="absolute top-30 -left-20 w-72 h-72 bg-[#FF2DAF] rounded-full opacity-20 blur-[80px]"></div>
-
-        {/* Punto de luz pequeño centro */}
+   
         <div className="absolute top-130 left-250 w-70 h-70 bg-[#FF2DAF] rounded-full opacity-20 blur-[60px] "></div>
 
         <div className="absolute top-90 left-50 w-96 h-96 bg-[#9B4DFF] rounded-full opacity-15 blur-[100px]"></div>
 
-        {/* Líneas decorativas */}
+   
         <div
           className="absolute inset-0"
           style={{
@@ -113,7 +116,8 @@ const SearchPage = () => {
             <form onSubmit={(e) => { e.preventDefault(); performSearch(query, filters); }} className="max-w-3xl mx-auto">
               <div className="flex items-center gap-4">
                 <div className="flex-1 relative group">
-                  {/* Efectos de luz en las esquinas del input */}
+
+               
                   <div className="absolute -top-2 -left-2 w-4 h-4 bg-[#00ffcc] rounded-full blur-md opacity-70"></div>
                   <div className="absolute -top-2 -right-2 w-4 h-4 bg-[#9B4DFF] rounded-full blur-md opacity-70"></div>
                   <div className="absolute -bottom-2 left-1/2 w-4 h-4 bg-[#FF2DAF] rounded-full blur-md opacity-70"></div>
@@ -143,7 +147,7 @@ const SearchPage = () => {
                 </button>
               </div>
 
-              {/* Panel de filtros corregido */}
+              {/* Panel de filtros */}
               {showFilters && (
                 <div className="mt-6 p-6 bg-[#1A0B2E] bg-opacity-70 rounded-xl border border-[#FF2DAF20] backdrop-blur-xl shadow-[0_0_20px_rgba(255,45,175,0.1)]">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -205,7 +209,7 @@ const SearchPage = () => {
                       </select>
                     </div>
 
-                    {/* Selector de Ordenamiento */}
+                    {/* Selector para ordenar */}
                     <div className="space-y-2">
                       <label className="block text-[#FFB4E1] text-sm font-medium mb-2">
                         Ordenar por
@@ -238,7 +242,7 @@ const SearchPage = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
             {results.map((movie) => (
               <div key={movie.id} className="relative group">
-                {/* Glowing border effect */}
+                {/* Efecto de luz en el hover */}
                 <div
                   className="absolute -inset-0.5 bg-gradient-to-r from-[#FF2DAF] to-[#9B4DFF] 
                   rounded-2xl opacity-30 blur-lg group-hover:opacity-50 transition-all duration-300"

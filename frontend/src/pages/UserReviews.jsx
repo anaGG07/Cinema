@@ -1,33 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { getImageUrl } from "../services/tmdb";
+import { getImageUrl, getUserReviews } from "../services/tmdb";
 import { API_ROUTES } from "../config/apiRoutes";
 import { useFetch } from "../hooks/useFetch";
 import { Star, Film, ArrowRight } from "lucide-react";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const UserReviews = () => {
-  const {
-    data: reviews,
-    loading,
-    error,
-  } = useFetch(
-    () =>
-      fetch(API_ROUTES.USER.REVIEWS, {
-        credentials: "include",
-      }).then((res) => {
-        if (!res.ok) throw new Error("Error al cargar las reseñas");
-        return res.json();
-      }),
-    []
-  );
+  const { data: reviews, loading, error } = useFetch(getUserReviews, []);
 
-  // Loading State
   if (loading) {
     return <LoadingSpinner />;
   }
 
-  // Error State
   if (error) {
     return (
       <div
@@ -47,14 +32,13 @@ const UserReviews = () => {
     );
   }
 
-  // Empty State
   if (!reviews || reviews.length === 0) {
     return (
       <div
         className="min-h-screen flex items-center justify-center relative overflow-hidden"
         style={{ background: "#0A051A" }}
       >
-        {/* Decorative background elements */}
+        {/* Decoraciones de fondo */}
         <div className="absolute -top-20 right-20 w-96 h-96 bg-[#9B4DFF] rounded-full opacity-20 blur-[100px]"></div>
         <div className="absolute bottom-20 left-20 w-72 h-72 bg-[#FF2DAF] rounded-full opacity-20 blur-[80px]"></div>
 
@@ -85,13 +69,11 @@ const UserReviews = () => {
     );
   }
 
-  // Reviews List
   return (
     <div
       className="min-h-screen pt-20 pb-10 relative overflow-hidden"
       style={{ background: "#0A051A" }}
     >
-      {/* Decorative background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-20 right-20 w-96 h-96 bg-[#9B4DFF] rounded-full opacity-20 blur-[100px]"></div>
         <div className="absolute bottom-20 left-20 w-72 h-72 bg-[#FF2DAF] rounded-full opacity-20 blur-[80px]"></div>
@@ -116,7 +98,7 @@ const UserReviews = () => {
                 key={`${review.movieId}-${review.createdAt}`}
                 className="relative group"
               >
-                {/* Glowing border effect */}
+                {/* Efecto en el borde */}
                 <div
                   className="absolute -inset-0.5 bg-gradient-to-r from-[#FF2DAF] to-[#9B4DFF] 
                   rounded-2xl opacity-30 blur-lg group-hover:opacity-50 transition-all duration-300"

@@ -19,13 +19,16 @@ const RegisterPage = () => {
 
   useEffect(() => {
     const fetchRandomMovie = async () => {
+
       try {
         const data = await getPopularMovies();
+
         if (data.results && data.results.length > 0) {
           const randomIndex = Math.floor(Math.random() * data.results.length);
           const movie = data.results[randomIndex];
           setBackgroundImage(getImageUrl(movie.backdrop_path, "original"));
         }
+
       } catch (error) {
         console.error("Error al obtener imagen de fondo:", error);
       }
@@ -71,11 +74,11 @@ const RegisterPage = () => {
           transform: "scale(1.1)",
         }}
       >
-        {/* Overlay con gradiente */}
+        
         <div className="absolute inset-0 bg-gradient-to-br bg-[#1A0B2E]/90"></div>
       </div>
 
-      {/* Contenedor con efecto glassmorphism */}
+      {/* Contenedor */}
       <div className="relative z-10 w-[400px] h-[550px] p-5 mx-auto mb-15">
         <div
           className="bg-white/10 rounded-full border border-white/20 shadow-2xl p-10 h-full flex flex-col justify-center"
@@ -178,7 +181,7 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            {/* Botón de submit con gradiente neón */}
+            {/* Botón crear cuenta */}
             <button
               type="submit"
               className="w-full px-4 py-2 rounded-lg font-medium text-sm text-white

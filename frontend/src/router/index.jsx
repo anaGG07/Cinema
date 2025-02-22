@@ -1,5 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
+import { useAuth } from "../context/AuthContext";
 
 import { ROUTES } from "./paths";
 
@@ -16,35 +17,13 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import UserReviews from "../pages/UserReviews";
 import ProfilePage from "../pages/ProfilePage";
-import LoadingSpinner from "../components/LoadingSpinner";
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null); // Inicializa en `null` para evitar redirecciones prematuras
+  const { isAuthenticated, loading } = useAuth();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/users/me`,
-          {
-            credentials: "include", // <--- Enviará la cookie de sesión automáticamente
-          }
-        );
-
-        setIsAuthenticated(response.ok); 
-
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-        setIsAuthenticated(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  if (isAuthenticated === null) {
-    return <LoadingSpinner />; // Muestra un loader mientras se verifica la autenticación
+  if (loading) {
+    return <LoadingSpinner />;
   }
 
   if (!isAuthenticated) {

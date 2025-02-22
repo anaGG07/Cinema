@@ -10,7 +10,7 @@
 6. [Modelos de Base de Datos](#modelos-de-base-de-datos)
 7. [Implementaciones de Seguridad](#implementaciones-de-seguridad)
 8. [Configuración del Entorno](#configuración-del-entorno)
-9. [Configuración de Docker](#configuración-de-docker)
+9. [Pruebas con Thunder Client](#guía-de-pruebas-con-thunder-client)
 
 ## Descripción General del Proyecto
 
@@ -353,11 +353,11 @@ Todos los errores siguen esta estructura:
 }
 ```
 
-## Guía de Pruebas con Postman
+## Guía de Pruebas con Thunder Client
 
 ### Configuración del Entorno
 
-1. Crear un nuevo entorno en Postman
+1. Crear un nuevo entorno en Thunder Client
 2. Configurar variables:
 
 ```
@@ -960,3 +960,94 @@ Error Response (401):
     }
 ```
 
+
+7. **Obtener géneros**
+
+- Método: GET
+- URL: `http://localhost:4000/api/movies/genres`
+- Authorization: `Bearer {token}`
+
+- Respuestas:
+
+```javascript
+   {
+  "genres": [
+    {
+      "id": 28,
+      "name": "Acción"
+    },
+    {
+      "id": 12,
+      "name": "Aventura"
+    },
+    {
+      "id": 16,
+      "name": "Animación"
+    },
+    {
+      "id": 35,
+      "name": "Comedia"
+    },
+    {
+      "id": 80,
+      "name": "Crimen"
+    },
+    {
+      "id": 99,
+      "name": "Documental"
+    },
+    {
+      "id": 18,
+      "name": "Drama"
+    },
+    {
+      "id": 10751,
+      "name": "Familia"
+    },
+    {
+      "id": 14,
+      "name": "Fantasía"
+    },
+    {
+      "id": 36,
+      "name": "Historia"
+    },
+    {
+      "id": 27,
+      "name": "Terror"
+    },
+    {
+      "id": 10402,
+      "name": "Música"
+    },
+    {
+      "id": 9648,
+      "name": "Misterio"
+    },
+    {
+      "id": 10749,
+      "name": "Romance"
+    },
+    {
+      "id": 878,
+      "name": "Ciencia ficción"
+    },
+    {
+      "id": 10770,
+      "name": "Película de TV"
+    },
+    {
+      "id": 53,
+      "name": "Suspense"
+    },
+    {
+      "id": 10752,
+      "name": "Bélica"
+    },
+    {
+      "id": 37,
+      "name": "Western"
+    }
+  ]
+}
+```
